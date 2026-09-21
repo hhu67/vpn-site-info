@@ -1,4 +1,5 @@
 .env
+server
 *.log
 tmp/
 dist/

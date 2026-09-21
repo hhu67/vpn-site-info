@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"vpn-site-info/internal/config"
 	"vpn-site-info/internal/database"
@@ -11,6 +13,19 @@ import (
 
 	"github.com/joho/godotenv"
 )
+
+func serveSPA(distPath string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		filePath := filepath.Join(distPath, r.URL.Path)
+
+		if _, err := os.Stat(filePath); err == nil {
+			http.FileServer(http.Dir(distPath)).ServeHTTP(w, r)
+			return
+		}
+
+		http.ServeFile(w, r, filepath.Join(distPath, "index.html"))
+	}
+}
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -43,8 +58,7 @@ func main() {
 	mux.Handle("/api/list/vpn", middleware.AuthMiddleware(http.HandlerFunc(h.ListVPN), cfg.JWTSecret))
 	mux.Handle("/api/change-password", middleware.AuthMiddleware(http.HandlerFunc(h.ChangePassword), cfg.JWTSecret))
 
-	fs := http.FileServer(http.Dir("./frontend/dist"))
-	mux.Handle("/", fs)
+	mux.HandleFunc("/", serveSPA("./frontend/dist"))
 
 	port := cfg.Port
 	if port == "" {
