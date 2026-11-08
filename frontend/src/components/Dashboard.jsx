@@ -12,6 +12,7 @@ function Dashboard({ onLogout }) {
   const [loading, setLoading] = useState(true)
   const [showChangePassword, setShowChangePassword] = useState(false)
   const [copiedId, setCopiedId] = useState(null)
+  const [generatingHappId, setGeneratingHappId] = useState(null)
 
   useEffect(() => {
     fetchLinks()
@@ -116,6 +117,47 @@ function Dashboard({ onLogout }) {
     }
   }
 
+  const handleGenerateCryptoLink = async (id) => {
+    setError('')
+    setSuccess('')
+    setGeneratingHappId(id)
+
+    try {
+      const response = await fetch('/api/crypto-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+
+      if (!response.ok) {
+        let errMessage = 'Ошибка генерации Happ ссылки'
+        try {
+          const errData = await response.json()
+          if (errData && errData.error) errMessage = errData.error
+        } catch {
+          const text = await response.text()
+          if (text) errMessage = text
+        }
+        throw new Error(errMessage)
+      }
+
+      const data = await response.json()
+      const cryptoLink = data.crypto_link || data.link
+
+      setLinks((prevLinks) =>
+        prevLinks.map((item) =>
+          item.id === id ? { ...item, crypto_link: cryptoLink } : item
+        )
+      )
+
+      setSuccess('Happ крипто-ссылка успешно создана!')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setGeneratingHappId(null)
+    }
+  }
+
   const startEdit = (link) => {
     setEditingId(link.id)
     setEditingName(link.name)
@@ -128,9 +170,9 @@ function Dashboard({ onLogout }) {
     setEditingLink('')
   }
 
-  const handleCopyLink = (link) => {
-    navigator.clipboard.writeText(link)
-    setCopiedId(link)
+  const handleCopyLink = (text, identifier) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(identifier || text)
     setTimeout(() => setCopiedId(null), 2000)
   }
 
@@ -277,24 +319,28 @@ function Dashboard({ onLogout }) {
           links.map((link) => (
             <div key={link.id} className="vpn-item">
               {editingId === link.id ? (
-                <>
-                  <div style={{ flex: 1 }}>
+                <div className="vpn-edit-mode">
+                  <div className="form-group" style={{ marginBottom: '10px' }}>
+                    <label>Название</label>
                     <input
                       type="text"
                       value={editingName}
                       onChange={(e) => setEditingName(e.target.value)}
                       placeholder="Название ссылки"
-                      style={{ width: '100%', marginBottom: '8px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                     />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: '12px' }}>
+                    <label>VPN ссылка</label>
                     <textarea
                       value={editingLink}
                       onChange={(e) => setEditingLink(e.target.value)}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', minHeight: '60px' }}
+                      placeholder="VPN ссылка"
+                      style={{ minHeight: '70px' }}
                     />
                   </div>
                   <div className="vpn-actions">
                     <button
-                      className="btn-small btn-edit"
+                      className="btn-small btn-primary"
                       onClick={() => handleUpdate(link.id)}
                     >
                       Сохранить
@@ -302,37 +348,120 @@ function Dashboard({ onLogout }) {
                     <button
                       className="btn-small"
                       onClick={cancelEdit}
-                      style={{ background: '#999' }}
+                      style={{ background: '#64748b' }}
                     >
                       Отмена
                     </button>
                   </div>
-                </>
+                </div>
               ) : (
                 <>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>{link.name}</div>
-                    <div className="vpn-link">{link.link}</div>
+                  <div className="vpn-item-header">
+                    <div className="vpn-item-title">{link.name}</div>
+                    <div className="vpn-actions">
+                      <button
+                        className="btn-small btn-edit"
+                        onClick={() => startEdit(link)}
+                      >
+                        Изменить
+                      </button>
+                      <button
+                        className="btn-small btn-delete"
+                        onClick={() => handleDelete(link.id)}
+                      >
+                        Удалить
+                      </button>
+                    </div>
                   </div>
-                  <div className="vpn-actions">
-                    <button
-                      className={`btn-small ${copiedId === link.link ? 'btn-copied' : 'btn-copy'}`}
-                      onClick={() => handleCopyLink(link.link)}
-                    >
-                      {copiedId === link.link ? '✓ Скопировано' : 'Копировать'}
-                    </button>
-                    <button
-                      className="btn-small btn-edit"
-                      onClick={() => startEdit(link)}
-                    >
-                      Изменить
-                    </button>
-                    <button
-                      className="btn-small btn-delete"
-                      onClick={() => handleDelete(link.id)}
-                    >
-                      Удалить
-                    </button>
+
+                  {/* Regular VPN Link */}
+                  <div className="link-block">
+                    <div className="link-block-label">VPN ссылка</div>
+                    <div className="link-block-content">
+                      <a
+                        href={link.link}
+                        target={link.link.startsWith('http') ? '_blank' : '_self'}
+                        rel="noopener noreferrer"
+                        className="vpn-link"
+                        title={`Нажмите для перехода\n${link.link}`}
+                      >
+                        {link.link}
+                      </a>
+                      <div className="link-actions">
+                        <a
+                          href={link.link}
+                          target={link.link.startsWith('http') ? '_blank' : '_self'}
+                          rel="noopener noreferrer"
+                          className="btn-small btn-open"
+                          title="Перейти по ссылке"
+                        >
+                          ↗ Перейти
+                        </a>
+                        <button
+                          className={`btn-small ${copiedId === link.id + '-vpn' ? 'btn-copied' : 'btn-copy'}`}
+                          onClick={() => handleCopyLink(link.link, link.id + '-vpn')}
+                        >
+                          {copiedId === link.id + '-vpn' ? '✓ Скопировано' : 'Копировать'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Happ Crypto Link */}
+                  <div className="link-block">
+                    <div className="link-block-label">
+                      <span className="happ-badge">Happ</span>
+                      <span>Крипто-ссылка (happ://)</span>
+                    </div>
+                    {link.crypto_link ? (
+                      <div className="link-block-content link-block-happ">
+                        <a
+                          href={link.crypto_link}
+                          target={link.crypto_link.startsWith('http') ? '_blank' : '_self'}
+                          rel="noopener noreferrer"
+                          className="vpn-link happ-link-text"
+                          title={`Нажмите для перехода в Happ\n${link.crypto_link}`}
+                        >
+                          {link.crypto_link}
+                        </a>
+                        <div className="link-actions">
+                          <a
+                            href={link.crypto_link}
+                            target={link.crypto_link.startsWith('http') ? '_blank' : '_self'}
+                            rel="noopener noreferrer"
+                            className="btn-small btn-open"
+                            title="Открыть в Happ"
+                          >
+                            ↗ Перейти
+                          </a>
+                          <button
+                            className={`btn-small ${copiedId === link.id + '-happ' ? 'btn-copied' : 'btn-happ'}`}
+                            onClick={() => handleCopyLink(link.crypto_link, link.id + '-happ')}
+                          >
+                            {copiedId === link.id + '-happ' ? '✓ Скопировано' : 'Копировать Happ'}
+                          </button>
+                          <button
+                            className="btn-small btn-happ-refresh"
+                            onClick={() => handleGenerateCryptoLink(link.id)}
+                            disabled={generatingHappId === link.id}
+                            title="Обновить крипто-ссылку Happ"
+                          >
+                            {generatingHappId === link.id ? '...' : '🔄'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="happ-empty-state">
+                        <span>Крипто-ссылка Happ еще не создана</span>
+                        <button
+                          className="btn-small btn-happ-generate"
+                          onClick={() => handleGenerateCryptoLink(link.id)}
+                          disabled={generatingHappId === link.id}
+                        >
+                          {generatingHappId === link.id ? '⚡ Генерация Happ...' : '⚡ Создать Happ ссылку'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </>
               )}

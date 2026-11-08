@@ -93,6 +93,7 @@ func main() {
 	mux.Handle("/api/delete/vpn", middleware.AuthMiddleware(http.HandlerFunc(h.DeleteVPN), cfg.JWTSecret))
 	mux.Handle("/api/list/vpn", middleware.AuthMiddleware(http.HandlerFunc(h.ListVPN), cfg.JWTSecret))
 	mux.Handle("/api/change-password", middleware.AuthMiddleware(http.HandlerFunc(h.ChangePassword), cfg.JWTSecret))
+	mux.Handle("/api/crypto-link", middleware.AuthMiddleware(http.HandlerFunc(h.CryptoLink), cfg.JWTSecret))
 	log.Println("API routes registered")
 
 	log.Println("Setting up SPA routes...")

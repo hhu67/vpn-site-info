@@ -1,17 +1,23 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type VPNLink struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-	Link string `json:"link"`
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	Link       string `json:"link"`
+	CryptoLink string `json:"crypto_link"`
 }
 
 type InsertVPNRequest struct {
@@ -27,6 +33,18 @@ type UpdateVPNRequest struct {
 
 type DeleteVPNRequest struct {
 	ID int `json:"id"`
+}
+
+type CryptoLinkReq struct {
+	URL string `json:"url"`
+}
+
+type CryptoLinkRequest struct {
+	ID int `json:"id"`
+}
+
+type CryptoLinkResp struct {
+	EncryptedLink string `json:"encrypted_link"`
 }
 
 func (h *Handler) InsertVPN(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +185,7 @@ func (h *Handler) ListVPN(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("[HANDLER] ListVPN: querying database")
-	rows, err := h.db.Query(context.Background(), "SELECT id, name, link FROM vpn_links ORDER BY id")
+	rows, err := h.db.Query(context.Background(), "SELECT id, name, link, COALESCE(crypto_link, '') FROM vpn_links ORDER BY id")
 	if err != nil {
 		log.Printf("[HANDLER] ListVPN: database error: %v", err)
 		http.Error(w, "Error fetching links", http.StatusInternalServerError)
@@ -178,7 +196,7 @@ func (h *Handler) ListVPN(w http.ResponseWriter, r *http.Request) {
 	var links []VPNLink
 	for rows.Next() {
 		var link VPNLink
-		if err := rows.Scan(&link.ID, &link.Name, &link.Link); err != nil {
+		if err := rows.Scan(&link.ID, &link.Name, &link.Link, &link.CryptoLink); err != nil {
 			log.Printf("[HANDLER] ListVPN: error scanning row: %v", err)
 			http.Error(w, "Error scanning links", http.StatusInternalServerError)
 			return
@@ -193,4 +211,106 @@ func (h *Handler) ListVPN(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[HANDLER] ListVPN: success, returning %d links", len(links))
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(links)
+}
+
+func generateCryptoLink(url string) (string, error) {
+	apiURL := "https://crypto.happ.su/api-v2.php"
+
+	payload := CryptoLinkReq{
+		URL: url,
+	}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return "", err
+	}
+	req, err := http.NewRequest(http.MethodPost, apiURL, bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New(resp.Status)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var cryptoLinkResp CryptoLinkResp
+	if err := json.Unmarshal(body, &cryptoLinkResp); err != nil {
+		return "", err
+	}
+	return cryptoLinkResp.EncryptedLink, nil
+}
+
+func (h *Handler) CryptoLink(w http.ResponseWriter, r *http.Request) {
+	log.Printf("[HANDLER] CryptoLink called")
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var id int
+	if strings.Contains(r.Header.Get("Content-Type"), "application/json") {
+		var req CryptoLinkRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err == nil {
+			id = req.ID
+		}
+	}
+
+	if id == 0 {
+		idStr := r.FormValue("id")
+		if idStr != "" {
+			var err error
+			id, err = strconv.Atoi(idStr)
+			if err != nil {
+				http.Error(w, "Invalid ID", http.StatusBadRequest)
+				return
+			}
+		}
+	}
+
+	if id == 0 {
+		http.Error(w, "ID is required", http.StatusBadRequest)
+		return
+	}
+
+	var link string
+	err := h.db.QueryRow(r.Context(), "SELECT link FROM vpn_links WHERE id = $1", id).Scan(&link)
+	if err != nil {
+		log.Printf("[HANDLER] CryptoLink: link not found or db error: %v", err)
+		http.Error(w, "Link not found", http.StatusNotFound)
+		return
+	}
+
+	cryptLink, err := generateCryptoLink(link)
+	if err != nil {
+		log.Printf("[HANDLER] CryptoLink: error generating crypto link: %v", err)
+		http.Error(w, "Error generating crypto link", http.StatusInternalServerError)
+		return
+	}
+
+	// Сохраняем сгенерированную ссылку в текущую запись
+	_, err = h.db.Exec(r.Context(), "UPDATE vpn_links SET crypto_link = $1 WHERE id = $2", cryptLink, id)
+	if err != nil {
+		log.Printf("[HANDLER] CryptoLink: database error on update: %v", err)
+		http.Error(w, "Error saving crypto link", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"link":        cryptLink,
+		"crypto_link": cryptLink,
+	})
 }

@@ -169,40 +169,131 @@ button:disabled {
 .vpn-item {
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 14px;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 18px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px;
   transition: all 0.3s ease;
 }
 
 .vpn-item:hover {
   border-color: #3b82f6;
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-  transform: translateX(4px);
+}
+
+.vpn-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.vpn-item-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.vpn-edit-mode {
+  display: flex;
+  flex-direction: column;
+}
+
+.link-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.link-block-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link-block-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 0;
+}
+
+.link-block-happ {
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(30, 27, 75, 0.25);
 }
 
 .vpn-link {
   flex: 1;
-  word-break: break-all;
-  margin-right: 16px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: #94a3b8;
   font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.vpn-link:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.happ-link-text {
+  color: #c4b5fd;
+}
+
+.happ-link-text:hover {
+  color: #e0e7ff;
+}
+
+.happ-badge {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.happ-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #94a3b8;
   font-size: 14px;
-  line-height: 1.6;
 }
 
-.vpn-item > div:first-child {
-  flex: 1;
-}
-
-.vpn-item > div:first-child > div:first-child {
-  font-weight: 600;
-  color: #f1f5f9;
-  margin-bottom: 8px;
-  font-size: 15px;
+.link-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .vpn-actions {
@@ -247,6 +338,50 @@ button:disabled {
 .btn-copied {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   opacity: 0.9;
+}
+
+.btn-open {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-open:hover {
+  background: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-happ {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.btn-happ:hover {
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.35);
+}
+
+.btn-happ-generate {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+}
+
+.btn-happ-generate:hover {
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.35);
+}
+
+.btn-happ-refresh {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.btn-happ-refresh:hover {
+  background: rgba(148, 163, 184, 0.25);
+  color: #f1f5f9;
+  box-shadow: none;
 }
 
 .header {
@@ -416,24 +551,27 @@ textarea {
     flex-wrap: wrap;
   }
 
-  .vpn-item {
+  .link-block-content,
+  .happ-empty-state {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 10px;
   }
 
-  .vpn-link {
-    margin-right: 0;
-    margin-bottom: 12px;
-    width: 100%;
-  }
-
-  .vpn-actions {
-    width: 100%;
+  .link-actions {
+    display: flex;
     gap: 8px;
+    width: 100%;
+  }
+
+  .link-actions .btn-small {
+    flex: 1;
+    text-align: center;
   }
 
   .btn-small {
     flex: 1;
     min-width: 80px;
+    text-align: center;
   }
 }

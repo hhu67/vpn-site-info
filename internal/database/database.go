@@ -22,6 +22,7 @@ func InitSchema(db *pgxpool.Pool) error {
 		id SERIAL PRIMARY KEY,
 		name VARCHAR(255) NOT NULL,
 		link VARCHAR(1024) NOT NULL,
+		crypto_link VARCHAR(2048) DEFAULT '',
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);

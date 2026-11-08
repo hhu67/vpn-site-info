@@ -166,6 +166,12 @@ go run cmd/server/main.go
     "password_confirm": "новый-пароль"
   }
   ```
+- `POST /api/crypto-link` - Создание зашифрованной ссылки для Happ
+  ```json
+  {
+    "id": 1
+  }
+  ```
 
 ## Схема базы данных
 
