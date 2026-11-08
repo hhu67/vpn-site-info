@@ -11,6 +11,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -20,8 +21,9 @@ body {
 
 #root {
   width: 100%;
-  max-width: 1000px;
+  max-width: 960px;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .container {
@@ -29,14 +31,16 @@ body {
   border-radius: 20px;
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(59, 130, 246, 0.1);
-  padding: 40px;
-  animation: fadeIn 0.5s ease-in;
+  padding: 36px;
+  animation: fadeIn 0.4s ease-in;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-16px);
   }
   to {
     opacity: 1;
@@ -47,7 +51,7 @@ body {
 h1 {
   color: #f1f5f9;
   margin-bottom: 20px;
-  font-size: 32px;
+  font-size: 28px;
   text-align: center;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -55,26 +59,26 @@ h1 {
 
 h2 {
   color: #60a5fa;
-  margin-bottom: 30px;
-  font-size: 24px;
+  margin-bottom: 24px;
+  font-size: 20px;
   text-align: center;
   font-weight: 600;
 }
 
 h3 {
   color: #cbd5e1;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #cbd5e1;
   font-weight: 500;
   font-size: 14px;
@@ -84,13 +88,14 @@ input[type="password"],
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 14px;
   background: #0f172a;
   border: 1px solid #334155;
   border-radius: 10px;
   font-size: 16px;
   color: #f1f5f9;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 input[type="password"]::placeholder,
@@ -114,15 +119,16 @@ button {
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
 }
 
 button:active {
@@ -130,83 +136,161 @@ button:active {
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .error {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.3);
   color: #fca5a5;
-  padding: 14px;
+  padding: 12px 14px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-align: center;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .success {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(34, 197, 94, 0.12);
   border: 1px solid rgba(34, 197, 94, 0.3);
   color: #86efac;
-  padding: 14px;
+  padding: 12px 14px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-align: center;
   font-weight: 500;
+  font-size: 14px;
 }
 
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-logout {
+  width: auto;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.btn-logout:hover {
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-change-password {
+  width: auto;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.btn-change-password:hover {
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+/* Add Form */
+.add-form {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 28px;
+}
+
+.add-form h3 {
+  color: #f1f5f9;
+  margin-bottom: 14px;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* VPN List */
 .vpn-list {
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .vpn-list h3 {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #f1f5f9;
 }
 
+/* VPN Item Card */
 .vpn-item {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 18px;
+  padding: 18px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  transition: all 0.3s ease;
+  gap: 12px;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .vpn-item:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.6), 0 0 16px rgba(59, 130, 246, 0.15);
 }
 
+/* Item Header */
 .vpn-item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .vpn-item-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: #f1f5f9;
+  word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
-.vpn-edit-mode {
+.vpn-actions {
   display: flex;
-  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
+/* Link Block */
 .link-block {
   display: flex;
   flex-direction: column;
   gap: 6px;
   min-width: 0;
+  width: 100%;
 }
 
 .link-block-label {
@@ -224,16 +308,17 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(51, 65, 85, 0.6);
-  border-radius: 8px;
-  padding: 10px 14px;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 10px;
+  padding: 8px 12px;
   min-width: 0;
+  box-sizing: border-box;
 }
 
 .link-block-happ {
-  border-color: rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.3);
   background: rgba(30, 27, 75, 0.25);
 }
 
@@ -244,7 +329,7 @@ button:disabled {
   overflow: hidden;
   text-overflow: ellipsis;
   color: #94a3b8;
-  font-family: 'Courier New', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 13px;
   line-height: 1.5;
   text-decoration: none;
@@ -281,73 +366,44 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   background: rgba(15, 23, 42, 0.4);
   border: 1px dashed rgba(139, 92, 246, 0.3);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px 14px;
   color: #94a3b8;
-  font-size: 14px;
+  font-size: 13px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
+/* Link Actions */
 .link-actions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.vpn-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
+/* Common small buttons */
 .btn-small {
   width: auto;
-  padding: 8px 14px;
+  padding: 7px 12px;
   font-size: 13px;
   white-space: nowrap;
-  border-radius: 8px;
+  border-radius: 7px;
   font-weight: 500;
-}
-
-.btn-edit {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-}
-
-.btn-edit:hover {
-  box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
-}
-
-.btn-delete {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
-
-.btn-delete:hover {
-  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
-}
-
-.btn-copy {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-.btn-copy:hover {
-  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-}
-
-.btn-copied {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  opacity: 0.9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn-open {
   background: rgba(59, 130, 246, 0.15);
   color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.35);
 }
 
 .btn-open:hover {
@@ -356,12 +412,25 @@ button:disabled {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
+.btn-copy {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.btn-copy:hover {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-copied {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  opacity: 0.95;
+}
+
 .btn-happ {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
 .btn-happ:hover {
-  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
 }
 
 .btn-happ-generate {
@@ -369,94 +438,85 @@ button:disabled {
 }
 
 .btn-happ-generate:hover {
-  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 .btn-happ-refresh {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(148, 163, 184, 0.12);
   color: #cbd5e1;
   border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
 .btn-happ-refresh:hover {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(148, 163, 184, 0.22);
   color: #f1f5f9;
   box-shadow: none;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  padding: 0;
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 40px;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+.btn-edit {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
 }
 
-.btn-logout {
-  width: auto;
-  padding: 10px 20px;
+.btn-edit:hover {
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-delete {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  font-size: 14px;
 }
 
-.btn-logout:hover {
-  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+.btn-delete:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-.btn-change-password {
-  width: auto;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  font-size: 14px;
+.btn-cancel {
+  background: #475569;
 }
 
-.btn-change-password:hover {
-  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+.btn-cancel:hover {
+  background: #64748b;
 }
 
-.add-form {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 30px;
+.vpn-edit-mode {
+  display: flex;
+  flex-direction: column;
 }
 
-.add-form h3 {
-  color: #f1f5f9;
-  margin-bottom: 18px;
+.vpn-edit-actions {
+  display: flex;
+  gap: 8px;
 }
 
-textarea {
-  min-height: 100px;
-  resize: vertical;
+.vpn-edit-actions .btn-small {
+  flex: 1;
 }
 
-.loading {
-  text-align: center;
-  padding: 60px 20px;
-  color: #60a5fa;
-  font-size: 18px;
-  font-weight: 500;
-}
-
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .modal {
@@ -464,16 +524,17 @@ textarea {
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(59, 130, 246, 0.15);
-  padding: 32px;
+  padding: 28px;
   max-width: 400px;
-  width: 90%;
-  animation: slideIn 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  animation: slideIn 0.25s ease;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-50px);
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
@@ -485,23 +546,23 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
   color: #f1f5f9;
 }
 
 .modal-close {
   width: auto;
-  padding: 6px 10px;
+  padding: 4px 8px;
   background: rgba(148, 163, 184, 0.1);
   color: #cbd5e1;
   border: none;
   border-radius: 6px;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 600;
@@ -518,60 +579,197 @@ textarea {
   flex-direction: column;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  width: 100%;
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #60a5fa;
+  font-size: 18px;
+  font-weight: 500;
 }
 
-.btn-primary:hover {
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-}
+/* =========================================
+   Responsive Design / Mobile Adaptations
+   ========================================= */
 
 @media (max-width: 768px) {
+  body {
+    align-items: flex-start;
+    padding: 12px 0 30px;
+  }
+
+  #root {
+    padding: 0 12px;
+  }
+
   .container {
-    padding: 24px;
+    padding: 20px 16px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 22px;
+    text-align: center;
   }
 
   .header {
     flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
+    gap: 14px;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+
+  .header h1 {
+    text-align: center;
   }
 
   .header-buttons {
     width: 100%;
-    justify-content: flex-start;
+    gap: 8px;
   }
 
-  .vpn-actions {
+  .btn-logout,
+  .btn-change-password {
+    flex: 1;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .add-form {
+    padding: 16px 14px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .vpn-list {
+    margin-top: 24px;
+  }
+
+  .vpn-item {
+    padding: 14px 12px;
+    border-radius: 12px;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .vpn-item-header {
     flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 10px;
   }
 
-  .link-block-content,
-  .happ-empty-state {
+  .vpn-item-title {
+    font-size: 15px;
+    min-width: 120px;
+  }
+
+  .vpn-actions .btn-small {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Key mobile fix: separate link row and action buttons */
+  .link-block-content {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .vpn-link {
+    width: 100%;
+    padding: 6px 8px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    border-radius: 6px;
+    font-size: 12px;
   }
 
   .link-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
   }
 
-  .link-actions .btn-small {
-    flex: 1;
+  .link-actions .btn-open {
+    flex: 1 1 85px;
+  }
+
+  .link-actions .btn-copy,
+  .link-actions .btn-copied,
+  .link-actions .btn-happ {
+    flex: 2 1 120px;
+  }
+
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 15px;
+  }
+
+  .happ-empty-state {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px 10px;
     text-align: center;
   }
 
+  .btn-happ-generate {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .modal {
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+}
+
+/* Extra small mobile screens (e.g. 320px - 390px) */
+@media (max-width: 480px) {
+  #root {
+    padding: 0 6px;
+  }
+
+  .container {
+    padding: 16px 12px;
+    border-radius: 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 17px;
+  }
+
+  h3 {
+    font-size: 15px;
+  }
+
+  .vpn-item {
+    padding: 12px 10px;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .vpn-item-title {
+    font-size: 14px;
+  }
+
+  .link-block-label {
+    font-size: 11px;
+  }
+
   .btn-small {
-    flex: 1;
-    min-width: 80px;
-    text-align: center;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+
+  .link-actions .btn-open {
+    min-width: 75px;
   }
 }

@@ -338,7 +338,7 @@ function Dashboard({ onLogout }) {
                       style={{ minHeight: '70px' }}
                     />
                   </div>
-                  <div className="vpn-actions">
+                  <div className="vpn-edit-actions">
                     <button
                       className="btn-small btn-primary"
                       onClick={() => handleUpdate(link.id)}
@@ -346,9 +346,8 @@ function Dashboard({ onLogout }) {
                       Сохранить
                     </button>
                     <button
-                      className="btn-small"
+                      className="btn-small btn-cancel"
                       onClick={cancelEdit}
-                      style={{ background: '#64748b' }}
                     >
                       Отмена
                     </button>
@@ -437,11 +436,12 @@ function Dashboard({ onLogout }) {
                           <button
                             className={`btn-small ${copiedId === link.id + '-happ' ? 'btn-copied' : 'btn-happ'}`}
                             onClick={() => handleCopyLink(link.crypto_link, link.id + '-happ')}
+                            title="Скопировать Happ ссылку"
                           >
-                            {copiedId === link.id + '-happ' ? '✓ Скопировано' : 'Копировать Happ'}
+                            {copiedId === link.id + '-happ' ? '✓ Скопировано' : 'Копировать'}
                           </button>
                           <button
-                            className="btn-small btn-happ-refresh"
+                            className="btn-small btn-happ-refresh btn-icon"
                             onClick={() => handleGenerateCryptoLink(link.id)}
                             disabled={generatingHappId === link.id}
                             title="Обновить крипто-ссылку Happ"
